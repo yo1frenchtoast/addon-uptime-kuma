@@ -26,8 +26,26 @@ Please read the rest of this document further instructions.
 
 ## Configuration
 
-This add-on has no configuration options, everything can be managed
-and configured via the Uptime Kuma interface.
+### Option: `envvars`
+
+This allows the setting of Environment Variables to control Uptime-Kuma
+configuration as documented at:
+
+<https://uptime.kuma.pet/docs/Environment-Variables>
+
+**Note**: _Changing these options can possibly cause issues with you instance.
+USE AT YOUR OWN RISK!_
+
+These are case sensitive.
+
+#### Sub-option: `name`
+
+The name of the environment variable to set which must start with `UPTIME_KUMA_`
+
+#### Sub-option: `value`
+
+The value of the environment variable to set, set the Uptime-Kuma documentation for
+full details. Values should always be entered as a string (even true/false values).
 
 ## Known issues and limitations
 
