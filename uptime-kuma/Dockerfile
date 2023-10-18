@@ -1,4 +1,4 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:14.1.0
+ARG BUILD_FROM=ghcr.io/hassio-addons/base:14.2.2
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
@@ -12,7 +12,7 @@ COPY requirements.txt /opt/
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup base
-ARG UPTIME_KUMA_VERSION="1.22.1"
+ARG UPTIME_KUMA_VERSION="1.23.3"
 # hadolint ignore=DL3003,DL3042
 RUN \
     apk add --no-cache --virtual .build-dependencies \
@@ -20,9 +20,9 @@ RUN \
         py3-pip=23.1.2-r0 \
     \
     && apk add --no-cache \
-        nodejs=18.17.0-r0 \
+        nodejs=18.18.2-r0 \
         npm=9.6.6-r0 \
-        python3=3.11.4-r0 \
+        python3=3.11.6-r0 \
         iputils=20221126-r2 \
         setpriv=2.38.1-r8 \
     \
