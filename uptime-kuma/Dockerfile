@@ -1,4 +1,4 @@
-ARG BUILD_FROM=ghcr.io/hassio-addons/base:14.3.3
+ARG BUILD_FROM=ghcr.io/hassio-addons/base-nodejs:0.1.4
 # hadolint ignore=DL3006
 FROM ${BUILD_FROM}
 
@@ -13,18 +13,18 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 # Setup base
 ARG UPTIME_KUMA_VERSION="1.23.11"
+ARG CLOUDFLARED_VERSION="2024.2.1"
+ARG BUILD_ARCH=amd64
 # hadolint ignore=DL3003,DL3042
 RUN \
     apk add --no-cache --virtual .build-dependencies \
         build-base=0.5-r3 \
-        py3-pip=23.1.2-r0 \
+        py3-pip=23.3.1-r0 \
     \
     && apk add --no-cache \
-        nodejs=18.18.2-r0 \
-        npm=9.6.6-r0 \
-        python3=3.11.6-r0 \
+        python3=3.11.8-r0 \
         iputils=20221126-r2 \
-        setpriv=2.38.1-r8 \
+        setpriv=2.39.3-r0 \
     \
     && mkdir -p /opt/uptime-kuma \
     && curl -L -s "https://github.com/louislam/uptime-kuma/archive/refs/tags/${UPTIME_KUMA_VERSION}.tar.gz" \
@@ -41,6 +41,13 @@ RUN \
         --omit=dev \
     && npm run download-dist \
     \
+    && if [ "${BUILD_ARCH}" = "aarch64" ]; then CLOUDFLARED_ARCH="arm64"; \
+    elif [ "${BUILD_ARCH}" = "amd64" ]; then CLOUDFLARED_ARCH="amd64"; \
+    elif [ "${BUILD_ARCH}" = "armv7" ]; then CLOUDFLARED_ARCH="arm"; fi \
+    && curl -L --fail -o /usr/bin/cloudflared \
+        "https://github.com/cloudflare/cloudflared/releases/download/${CLOUDFLARED_VERSION}/cloudflared-linux-${CLOUDFLARED_ARCH}" \
+    && chmod +x /usr/bin/cloudflared \
+    \
     && npm cache clear --force \
     \
     && apk del --no-cache --purge .build-dependencies \
@@ -50,12 +57,10 @@ RUN \
         /root/.npm \
         /root/.npmrc
 
-
 # Copy root filesystem
 COPY rootfs /
 
 # Build arguments
-ARG BUILD_ARCH
 ARG BUILD_DATE
 ARG BUILD_DESCRIPTION
 ARG BUILD_NAME
